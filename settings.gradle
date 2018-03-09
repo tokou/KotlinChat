@@ -1,0 +1,5 @@
+rootProject.name = 'KotlinChat'
+
+include 'common'
+include 'jvm'
+include 'js'
