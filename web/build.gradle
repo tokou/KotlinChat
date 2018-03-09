@@ -14,8 +14,19 @@ apply plugin: 'kotlin2js'
 //apply plugin: 'kotlin-dce-js'
 apply plugin: 'org.jetbrains.kotlin.frontend'
 
+repositories {
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-js-wrappers' }
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+
+    compile 'org.jetbrains:kotlin-react:16.2.1-pre.15-kotlin-1.2.30'
+    compile 'org.jetbrains:kotlin-react-dom:16.2.1-pre.15-kotlin-1.2.30'
+    compile 'org.jetbrains:kotlin-extensions:1.0.1-pre.15-kotlin-1.2.30'
+    compile 'org.jetbrains.kotlinx:kotlinx-html-js:0.6.9'
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core-js:0.22.5'
+
     testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
@@ -33,9 +44,20 @@ kotlinFrontend {
 
     sourceMaps = true
 
+    npm {
+        dependency("react", "^16.2.0")
+        dependency("react-dom", "^16.2.0")
+    }
+
     webpackBundle {
         bundleName = "main"
         contentPath = file('src/main/web')
         sourceMapEnabled = true
+    }
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
     }
 }
