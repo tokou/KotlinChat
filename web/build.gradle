@@ -1,0 +1,41 @@
+buildscript {
+
+    repositories {
+        jcenter()
+        maven { url "https://dl.bintray.com/kotlin/kotlin-eap" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.29"
+    }
+}
+
+apply plugin: 'kotlin2js'
+//apply plugin: 'kotlin-dce-js'
+apply plugin: 'org.jetbrains.kotlin.frontend'
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+compileKotlin2Js {
+    kotlinOptions {
+        metaInfo = true
+        sourceMap = true
+        sourceMapEmbedSources = 'always'
+        moduleKind = 'commonjs'
+    }
+}
+
+kotlinFrontend {
+
+    sourceMaps = true
+
+    webpackBundle {
+        bundleName = "main"
+        contentPath = file('src/main/web')
+        sourceMapEnabled = true
+    }
+}
