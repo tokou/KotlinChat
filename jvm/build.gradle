@@ -35,6 +35,6 @@ kotlin {
     }
 }
 
-mainClassName = 'chat.AppKt'
+mainClassName = 'io.ktor.server.netty.DevelopmentEngine'
 
 defaultTasks 'run'
