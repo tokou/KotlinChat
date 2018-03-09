@@ -19,6 +19,8 @@ repositories {
 }
 
 dependencies {
+    compile project(':js')
+
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 
     compile "org.jetbrains:kotlin-react:$kotlin_react_version"

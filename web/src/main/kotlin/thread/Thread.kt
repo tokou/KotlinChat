@@ -1,6 +1,7 @@
 package thread
 
 import chat.Message
+import chat.toDisplayString
 import react.RBuilder
 import react.RComponent
 import react.RProps
@@ -18,7 +19,7 @@ class Thread : RComponent<ThreadProps, RState>() {
         ul {
             props.messages.forEach {
                 li {
-                    +it.toString()
+                    +it.toDisplayString()
                 }
             }
         }

@@ -7,6 +7,8 @@ repositories {
 }
 
 dependencies {
+    implementation project(':jvm')
+
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     // Ktor
