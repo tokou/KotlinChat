@@ -1,21 +1,7 @@
 apply plugin: 'kotlin-platform-jvm'
-apply plugin: 'application'
-
-repositories {
-    maven { url "http://dl.bintray.com/kotlin/ktor" }
-    maven { url "https://dl.bintray.com/kotlin/kotlinx" }
-}
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
-    // Ktor
-    compile "io.ktor:ktor-server-netty:$ktor_version"
-
-    // Logging
-    compile "ch.qos.logback:logback-classic:$logback_version"
-
-
     testCompile "junit:junit:4.12"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
@@ -27,11 +13,3 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
-
-kotlin {
-    experimental {
-        coroutines "enable"
-    }
-}
-
-mainClassName = 'io.ktor.server.netty.DevelopmentEngine'
