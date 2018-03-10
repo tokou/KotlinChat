@@ -2,25 +2,12 @@ package utils
 
 import chat.Message
 import com.google.gson.reflect.TypeToken
-import kotlinx.serialization.json.JSON
-import kotlinx.serialization.list
-import kotlin.test.Ignore
+import utils.DateTimeTestUtils.list
+import utils.DateTimeTestUtils.str
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class DateTimeTest {
-
-    val str = """[
-        |{"content":"Hello","author":"John","timestamp":"2018-03-12T12:00:01"},
-        |{"content":"World","author":"Mick","timestamp":"2018-03-12T10:42:01"},
-        |{"content":"React","author":"Tracy","timestamp":"2018-03-12T09:03:21"}
-        |]""".trimMargin().replace("\n", "")
-
-    val list = listOf(
-        Message("Hello", "John", "2018-03-12T12:00:01".parseDate()),
-        Message("World", "Mick", "2018-03-12T10:42:01".parseDate()),
-        Message("React", "Tracy", "2018-03-12T09:03:21".parseDate())
-    )
 
     @Test
     fun deserialization() {
@@ -34,4 +21,5 @@ class DateTimeTest {
         val serialized = list.toJson()
         assertEquals(str, serialized)
     }
+
 }

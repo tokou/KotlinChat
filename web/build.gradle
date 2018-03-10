@@ -12,7 +12,8 @@ buildscript {
 
 apply plugin: 'kotlin2js'
 apply plugin: 'kotlinx-serialization'
-apply plugin: 'kotlin-dce-js'
+// Disable DCE for until we figure out how to make it work with the tests
+// apply plugin: 'kotlin-dce-js'
 apply plugin: 'org.jetbrains.kotlin.frontend'
 
 repositories {
@@ -31,8 +32,8 @@ dependencies {
     compile "org.jetbrains:kotlin-extensions:$kotlin_extensions_version"
     compile "org.jetbrains.kotlinx:kotlinx-html-js:$kotlin_html_js_version"
 
-    testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    // Needs to be in 'compile' for karma tests to work
+    compile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
 }
 
 [compileKotlin2Js, compileTestKotlin2Js]*.configure {
@@ -44,6 +45,10 @@ dependencies {
     }
 }
 
+// Disable DCE for until we figure out how to make it work with the tests
+//runDceKotlinJs.dceOptions.devMode = true
+//runDceTestKotlinJs.dceOptions.devMode = true
+
 kotlinFrontend {
 
     sourceMaps = true
@@ -51,12 +56,35 @@ kotlinFrontend {
     npm {
         dependency("react", "^16.2.0")
         dependency("react-dom", "^16.2.0")
+
+        devDependency "karma"
+        devDependency "mocha"
+        devDependency "enzyme"
+        devDependency "@types/enzyme"
+        devDependency "enzyme-adapter-react-16"
+        devDependency "@types/enzyme-adapter-react-16"
+        devDependency "karma-chrome-launcher"
+        devDependency "karma-mocha-reporter"
     }
 
     webpackBundle {
         bundleName = "main"
         contentPath = file('src/main/resources')
-        sourceMapEnabled = true
+        sourceMaps = true
+    }
+
+    karma {
+        reporters = ['mocha', 'junit']
+        frameworks = ['mocha']
+        browsers = ['Chrome']
+        plugins = ['karma-chrome-launcher', 'karma-mocha-reporter']
+        sourceMaps = true
+    }
+}
+
+tasks.whenTaskAdded { t ->
+    if (t.name == "karma-run-single") {
+        t.outputs.upToDateWhen { false }
     }
 }
 

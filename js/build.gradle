@@ -17,7 +17,6 @@ dependencies {
     expectedBy project(':common')
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-
     compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlin_serialization_version"
 
     testCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
@@ -48,17 +47,17 @@ task populateNodeModules(type: Copy, dependsOn: compileKotlin2Js) {
 
 node {
     download = true
-    nodeModulesDir = file("${project.buildDir}/node_modules")
+    nodeModulesDir = file("${project.buildDir}")
 }
 
 task installDependencies(type: NpmTask) {
-    args = ['install', 'mocha', 'source-map-support', '--save-dev']
+    args = ['install', 'mocha', 'source-map-support']
 }
 
-task prepareMocha(dependsOn: [compileTestKotlin2Js, populateNodeModules, installDependencies])
+task prepareMocha(dependsOn: [populateNodeModules, installDependencies])
 
 task runMocha(type: NodeTask, dependsOn: prepareMocha) {
-    script = file('build/node_modules/mocha/bin/mocha')
+    script = file("${project.buildDir}/node_modules/mocha/bin/mocha")
     args = [compileTestKotlin2Js.outputFile, '--require=source-map-support/register']
 }
 
