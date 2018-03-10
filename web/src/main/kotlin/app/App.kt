@@ -3,6 +3,7 @@ package app
 import chat.Message
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.await
+import kotlinx.serialization.list
 import org.w3c.fetch.Request
 import react.*
 import react.dom.div
@@ -43,7 +44,7 @@ class App : RComponent<RProps, AppState>() {
             val request = Request(url)
             val response = window.fetch(request).await()
             val text = response.text().await()
-            return text.let { json.parse(it) }
+            return text.let { json.parse(Message.serializer().list, it) }
         }
     }
 }

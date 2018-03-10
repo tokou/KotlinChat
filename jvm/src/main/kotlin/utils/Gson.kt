@@ -5,10 +5,9 @@ import com.google.gson.JsonSyntaxException
 import kotlin.reflect.KClass
 
 val gson = GsonBuilder()
-        .setPrettyPrinting()
-        .registerTypeAdapter(DateTime::class.java, DateTimeConverter())
-        .serializeNulls()
-        .create()!!
+    .registerTypeAdapter(DateTime::class.java, DateTimeConverter())
+    .serializeNulls()
+    .create()!!
 
 fun Any.toJson() = gson.toJson(this)!!
 
