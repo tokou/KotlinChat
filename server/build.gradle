@@ -20,6 +20,7 @@ dependencies {
     // Logging
     compile "ch.qos.logback:logback-classic:$logback_version"
 
+    testCompile "io.ktor:ktor-server-test-host:$ktor_version"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
     testCompile "junit:junit:$junit_version"
 }
