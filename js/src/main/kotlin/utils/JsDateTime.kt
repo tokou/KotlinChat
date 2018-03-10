@@ -4,10 +4,6 @@ import kotlin.js.Date
 
 actual data class DateTime(internal val date: Date) : Comparable<DateTime> {
 
-    constructor(): this(Date())
-
-    constructor(millis: Long): this(Date(millis))
-
     actual fun toDateFormatString(): String = date.toISOString()
 
     override operator fun compareTo(other: DateTime) = compareValuesBy(

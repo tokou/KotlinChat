@@ -11,6 +11,9 @@ import utils.parseDate
 import utils.gson
 
 fun Application.main() {
+    install(CORS) {
+        anyHost()
+    }
     install(DefaultHeaders)
     install(CallLogging)
     install(ContentNegotiation) {

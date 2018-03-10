@@ -15,6 +15,7 @@ dependencies {
     kotlinOptions {
         metaInfo = true
         sourceMap = true
+        sourceMapEmbedSources = 'always'
         moduleKind = 'commonjs'
     }
 }

@@ -15,7 +15,6 @@ interface ThreadProps : RProps {
 
 class Thread : RComponent<ThreadProps, RState>() {
     override fun RBuilder.render() {
-        console.log(props)
         ul {
             props.messages.forEach {
                 li {

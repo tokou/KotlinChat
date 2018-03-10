@@ -11,6 +11,7 @@ buildscript {
 }
 
 apply plugin: 'kotlin2js'
+apply plugin: 'kotlinx-serialization'
 apply plugin: 'kotlin-dce-js'
 apply plugin: 'org.jetbrains.kotlin.frontend'
 
@@ -22,6 +23,8 @@ dependencies {
     compile project(':js')
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$kotlin_serialization_version"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$kotlin_coroutines_version"
 
     compile "org.jetbrains:kotlin-react:$kotlin_react_version"
     compile "org.jetbrains:kotlin-react-dom:$kotlin_react_version"
@@ -36,6 +39,7 @@ dependencies {
     kotlinOptions {
         metaInfo = true
         sourceMap = true
+        sourceMapEmbedSources = 'always'
         moduleKind = 'commonjs'
     }
 }
@@ -53,5 +57,11 @@ kotlinFrontend {
         bundleName = "main"
         contentPath = file('src/main/resources')
         sourceMapEnabled = true
+    }
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
     }
 }

@@ -5,8 +5,6 @@ import java.util.*
 
 actual class DateTime(private val date: Date): Comparable<DateTime> {
 
-    constructor(millis: Long): this(Date(millis))
-
     actual fun toDateFormatString(): String = format.format(date)
 
     override operator fun compareTo(other: DateTime): Int = date.compareTo(other.date)
