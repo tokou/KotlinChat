@@ -1,14 +1,25 @@
 package app
 
-import chat.Message
-import io.ktor.application.*
-import io.ktor.features.*
+import chat.hello
+import chat.messages
+import io.ktor.application.Application
+import io.ktor.application.install
+import io.ktor.features.CORS
+import io.ktor.features.CallLogging
+import io.ktor.features.ContentNegotiation
+import io.ktor.features.DefaultHeaders
 import io.ktor.gson.GsonConverter
 import io.ktor.http.ContentType
-import io.ktor.response.*
-import io.ktor.routing.*
-import utils.parseDate
+import io.ktor.locations.Location
+import io.ktor.locations.Locations
+import io.ktor.routing.Routing
 import utils.gson
+
+@Location("/messages")
+class Messages
+
+@Location("/hello")
+class Hello
 
 fun Application.main() {
     install(CORS) {
@@ -19,16 +30,9 @@ fun Application.main() {
     install(ContentNegotiation) {
         register(ContentType.Application.Json, GsonConverter(gson))
     }
+    install(Locations)
     install(Routing) {
-        get("/") {
-            call.respondText("Hello world")
-        }
-        get("/messages") {
-            call.respond(listOf(
-                Message("Hello", "John", "2018-03-12T12:00:01".parseDate()),
-                Message("World", "Mick", "2018-03-12T10:42:01".parseDate()),
-                Message("React", "Tracy", "2018-03-12T09:03:21".parseDate())
-            ))
-        }
+        hello()
+        messages()
     }
 }

@@ -10,7 +10,7 @@ class AppTest {
 
     @Test
     fun rootSendsHello() = withTestApplication(Application::main) {
-        with(handleRequest(HttpMethod.Get, "/")) {
+        with(handleRequest(HttpMethod.Get, "/hello")) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals("Hello world", response.content)
         }
