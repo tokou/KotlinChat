@@ -82,6 +82,13 @@ kotlinFrontend {
     }
 }
 
+task copyIndex(type: Copy) {
+    from "src/main/resources"
+    into "${buildDir}/bundle/"
+}
+
+assemble.dependsOn copyIndex
+
 tasks.whenTaskAdded { t ->
     if (t.name == "karma-run-single") {
         t.outputs.upToDateWhen { false }

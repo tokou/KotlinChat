@@ -9,7 +9,7 @@ import utils.DateTimeTestUtils.str
 class AppTest {
 
     @Test
-    fun rootSendsHello() = withTestApplication(Application::main) {
+    fun rootSendsHello() = withTestApplication(Application::app) {
         with(handleRequest(HttpMethod.Get, "/hello")) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals("Hello world", response.content)
@@ -17,7 +17,7 @@ class AppTest {
     }
 
     @Test
-    fun stubbedMessages() = withTestApplication(Application::main) {
+    fun stubbedMessages() = withTestApplication(Application::app) {
         with(handleRequest(HttpMethod.Get, "/messages") {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
         }) {
