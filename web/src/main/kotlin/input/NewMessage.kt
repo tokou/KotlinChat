@@ -28,7 +28,10 @@ class NewMessage : RComponent<NewMessageProps, NewMessageState>() {
 
     override fun RBuilder.render() {
         form {
-            val submit: (Event) -> Unit = { this@NewMessage.sendMessage() }
+            val submit: (Event) -> Unit = {
+                it.preventDefault()
+                sendMessage()
+            }
             attrs {
                 onSubmitFunction = submit
             }
@@ -42,6 +45,7 @@ class NewMessage : RComponent<NewMessageProps, NewMessageState>() {
                         id = "message"
                         name = "message"
                         placeholder = "My message"
+                        value = state.value
                         onChangeFunction = usingValue {
                             setState {
                                 value = it
