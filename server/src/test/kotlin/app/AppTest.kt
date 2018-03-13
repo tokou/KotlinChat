@@ -1,15 +1,29 @@
 package app
 
-import io.ktor.application.*
-import io.ktor.http.*
-import kotlin.test.*
-import io.ktor.server.testing.*
+import io.ktor.application.Application
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.withTestApplication
+import org.koin.standalone.StandAloneContext.startKoin
+import org.koin.test.AutoCloseKoinTest
 import utils.DateTimeTestUtils.str
+import utils.TestRepositoryModule
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-class AppTest {
+class AppTest : AutoCloseKoinTest() {
+
+    @BeforeTest
+    fun before() {
+        startKoin(listOf(TestRepositoryModule))
+    }
 
     @Test
-    fun rootSendsHello() = withTestApplication(Application::app) {
+    fun rootSendsHello() = withTestApplication(Application::hello) {
         with(handleRequest(HttpMethod.Get, "/hello")) {
             assertEquals(HttpStatusCode.OK, response.status())
             assertEquals("Hello world", response.content)
@@ -17,7 +31,10 @@ class AppTest {
     }
 
     @Test
-    fun stubbedMessages() = withTestApplication(Application::app) {
+    fun stubbedMessages() = withTestApplication({
+        app()
+        messages()
+    }) {
         with(handleRequest(HttpMethod.Get, "/messages") {
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
         }) {
