@@ -20,6 +20,7 @@ import kotlin.js.json
 
 interface AppState : RState {
     var messages : List<Message>
+    var intervalId : Int?
 }
 
 class App : RComponent<RProps, AppState>() {
@@ -30,6 +31,12 @@ class App : RComponent<RProps, AppState>() {
 
     override fun componentDidMount() {
         updateMessages()
+        val intervalId = window.setInterval(this::updateMessages, 1000)
+        setState { this.intervalId = intervalId }
+    }
+
+    override fun componentWillUnmount() {
+        state.intervalId?.let { window.clearInterval(it) }
     }
 
     private fun updateMessages() {
