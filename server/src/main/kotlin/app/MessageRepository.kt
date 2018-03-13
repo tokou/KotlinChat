@@ -4,6 +4,7 @@ import chat.Message
 
 interface MessageRepository {
     fun getMessages(): List<Message>
+    fun insertMessage(message: Message)
 }
 
 class MemoryMessageRepository : MessageRepository {
@@ -12,7 +13,7 @@ class MemoryMessageRepository : MessageRepository {
 
     override fun getMessages(): List<Message> = messages
 
-    fun insertMessage(message: Message) {
+    override fun insertMessage(message: Message) {
         messages.add(message)
     }
 }

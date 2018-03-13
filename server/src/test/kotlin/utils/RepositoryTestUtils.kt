@@ -10,4 +10,5 @@ val TestRepositoryModule = applicationContext {
 
 class StubsMessageRepository : MessageRepository {
     override fun getMessages(): List<Message> = DateTimeTestUtils.list
+    override fun insertMessage(message: Message) {}
 }

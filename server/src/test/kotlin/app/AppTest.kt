@@ -9,8 +9,10 @@ import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
 import org.koin.standalone.StandAloneContext.startKoin
 import org.koin.test.AutoCloseKoinTest
+import utils.DateTimeTestUtils.list
 import utils.DateTimeTestUtils.str
 import utils.TestRepositoryModule
+import utils.gson
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -42,4 +44,18 @@ class AppTest : AutoCloseKoinTest() {
             assertEquals(str, response.content)
         }
     }
+
+    @Test
+    fun postMessages() = withTestApplication({
+        app()
+        messages()
+    }) {
+        with(handleRequest(HttpMethod.Post, "/messages") {
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            body = gson.toJson(list[0])
+        }) {
+            assertEquals(HttpStatusCode.Created, response.status())
+        }
+    }
+
 }

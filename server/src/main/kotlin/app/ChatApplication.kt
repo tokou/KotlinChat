@@ -7,6 +7,7 @@ import io.ktor.content.default
 import io.ktor.content.file
 import io.ktor.content.static
 import io.ktor.content.staticRootFolder
+import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
@@ -34,6 +35,7 @@ fun main(args: Array<String>) {
 }
 
 fun Application.app() {
+    install(CORS) { anyHost() }
     install(DefaultHeaders)
     install(CallLogging)
     install(ContentNegotiation) {
