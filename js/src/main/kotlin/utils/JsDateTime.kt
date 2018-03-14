@@ -3,6 +3,7 @@ package utils
 import kotlin.js.Date
 
 actual data class DateTime(internal val date: Date) : Comparable<DateTime> {
+    actual companion object {}
 
     actual fun toDateFormatString(): String = date.toISOString().dropLast(5) // '.000Z'
 
@@ -19,3 +20,5 @@ actual data class DateTime(internal val date: Date) : Comparable<DateTime> {
 actual fun String.parseDate() = DateTime(Date(Date.parse(this)))
 
 fun DateTime.toDisplayTime() = date.toLocaleTimeString("fr-FR")
+
+fun DateTime.Companion.now() = DateTime(Date())

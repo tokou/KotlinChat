@@ -1,6 +1,8 @@
 package utils
 
 expect class DateTime : Comparable<DateTime> {
+    companion object {}
+
     fun toDateFormatString(): String
 }
 

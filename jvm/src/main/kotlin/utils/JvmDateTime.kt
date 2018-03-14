@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 actual class DateTime(private val date: Date): Comparable<DateTime> {
+    actual companion object {}
 
     actual fun toDateFormatString(): String = format.format(date)
 
