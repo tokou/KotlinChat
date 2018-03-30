@@ -12,12 +12,14 @@ import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.DefaultHeaders
 import io.ktor.html.respondHtml
+import io.ktor.response.respondRedirect
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.sessions.*
 import kotlinx.html.*
 import org.koin.Koin
 import org.koin.dsl.module.applicationContext
@@ -45,16 +47,29 @@ fun Application.app() {
                 if (it.name == "admin" && youShallPass) UserIdPrincipal(hashed)
                 else null
             }
+            challenge = FormAuthChallenge.Redirect { call, _ ->
+                call.sessions.clear<UserIdPrincipal>()
+                "/hello"
+            }
         }
+    }
+    install(Sessions) {
+        cookie<UserIdPrincipal>("session")
     }
 }
 
 fun Application.hello() {
     routing {
-        get("/hello") { call.respondHtml {
+        get("/hello") {
+            if (call.sessions.get<UserIdPrincipal>() != null) {
+                call.respondRedirect("/admin")
+                return@get
+            }
+            call.respondHtml {
             body {
                 form {
                     method = FormMethod.post
+                    action = "/login"
                     div {
                         label { +"User" }
                         input {
@@ -72,11 +87,22 @@ fun Application.hello() {
                 }
             }
         } }
-        authenticate("topsecret") {
-            post("/hello") {
-                call.respondHtml {
-                    body { h3 { +"Hello Admin ${call.authentication.principal}" } }
+        get("/admin") {
+            if (call.sessions.get<UserIdPrincipal>() == null) {
+                call.respondRedirect("/hello")
+                return@get
+            }
+            call.respondHtml {
+                body {
+                    h3 { +"Hello Admin" }
+                    h2 { +"${call.sessions.get<UserIdPrincipal>()}" }
                 }
+            }
+        }
+        authenticate("topsecret") {
+            post("/login") {
+                call.sessions.set(call.authentication.principal)
+                call.respondRedirect("/admin")
             }
         }
     }
