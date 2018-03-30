@@ -22,6 +22,8 @@ dependencies {
     compile "org.koin:koin-core:$koin_version"
     compile "org.koin:koin-ktor:$koin_version"
 
+    compile "org.mindrot:jbcrypt:0.4"
+
     // Logging
     compile "ch.qos.logback:logback-classic:$logback_version"
 

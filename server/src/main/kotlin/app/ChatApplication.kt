@@ -14,7 +14,6 @@ import io.ktor.features.DefaultHeaders
 import io.ktor.html.respondHtml
 import io.ktor.routing.get
 import io.ktor.routing.post
-import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
@@ -23,6 +22,7 @@ import kotlinx.html.*
 import org.koin.Koin
 import org.koin.dsl.module.applicationContext
 import org.koin.standalone.StandAloneContext.startKoin
+import org.mindrot.jbcrypt.BCrypt
 import utils.KtorKoinLogger
 import java.io.File
 
@@ -37,14 +37,12 @@ fun Application.app() {
     install(CORS) { anyHost() }
     install(DefaultHeaders)
     install(CallLogging)
-    //install(ContentNegotiation) {
-    //    register(ContentType.Application.Json, GsonConverter(gson))
-    //}
-    //install(Locations)
     install(Authentication) {
         form("topsecret") {
             validate {
-                if (it.name == "admin" && it.password == "admin") UserIdPrincipal("admin")
+                val hashed = BCrypt.hashpw("admin", BCrypt.gensalt())
+                val youShallPass = BCrypt.checkpw(it.password, hashed)
+                if (it.name == "admin" && youShallPass) UserIdPrincipal(hashed)
                 else null
             }
         }
@@ -77,7 +75,7 @@ fun Application.hello() {
         authenticate("topsecret") {
             post("/hello") {
                 call.respondHtml {
-                    body { h3 { +"Hello Admin" } }
+                    body { h3 { +"Hello Admin ${call.authentication.principal}" } }
                 }
             }
         }
