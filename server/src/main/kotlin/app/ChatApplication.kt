@@ -1,8 +1,6 @@
 package app
 
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
+import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.content.default
 import io.ktor.content.file
@@ -12,6 +10,7 @@ import io.ktor.features.CORS
 import io.ktor.features.CallLogging
 import io.ktor.features.DefaultHeaders
 import io.ktor.html.respondHtml
+import io.ktor.pipeline.PipelinePhase
 import io.ktor.response.respondRedirect
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -20,6 +19,7 @@ import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.sessions.*
+import io.ktor.util.hex
 import kotlinx.html.*
 import org.koin.Koin
 import org.koin.dsl.module.applicationContext
@@ -54,7 +54,13 @@ fun Application.app() {
         }
     }
     install(Sessions) {
-        cookie<UserIdPrincipal>("session")
+        cookie<UserIdPrincipal>("session") {
+            transform(SessionTransportTransformerMessageAuthentication(hex("deadbeef")))
+        }
+    }
+    intercept(ApplicationCallPipeline.Infrastructure) {
+        log.debug("${call.sessions}")
+        log.debug("${call.authentication.principal}")
     }
 }
 
@@ -101,7 +107,7 @@ fun Application.hello() {
         }
         authenticate("topsecret") {
             post("/login") {
-                call.sessions.set(call.authentication.principal)
+                call.sessions.set(call.authentication.principal!! as UserIdPrincipal)
                 call.respondRedirect("/admin")
             }
         }
