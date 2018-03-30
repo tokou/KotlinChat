@@ -3,28 +3,27 @@ package app
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.auth.*
 import io.ktor.content.default
 import io.ktor.content.file
 import io.ktor.content.static
 import io.ktor.content.staticRootFolder
 import io.ktor.features.CORS
 import io.ktor.features.CallLogging
-import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
-import io.ktor.gson.GsonConverter
-import io.ktor.http.ContentType
-import io.ktor.locations.Locations
-import io.ktor.response.respondText
+import io.ktor.html.respondHtml
 import io.ktor.routing.get
+import io.ktor.routing.post
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import kotlinx.html.*
 import org.koin.Koin
 import org.koin.dsl.module.applicationContext
 import org.koin.standalone.StandAloneContext.startKoin
 import utils.KtorKoinLogger
-import utils.gson
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -38,15 +37,50 @@ fun Application.app() {
     install(CORS) { anyHost() }
     install(DefaultHeaders)
     install(CallLogging)
-    install(ContentNegotiation) {
-        register(ContentType.Application.Json, GsonConverter(gson))
+    //install(ContentNegotiation) {
+    //    register(ContentType.Application.Json, GsonConverter(gson))
+    //}
+    //install(Locations)
+    install(Authentication) {
+        form("topsecret") {
+            validate {
+                if (it.name == "admin" && it.password == "admin") UserIdPrincipal("admin")
+                else null
+            }
+        }
     }
-    install(Locations)
 }
 
 fun Application.hello() {
     routing {
-        get("/hello") { call.respondText("Hello world") }
+        get("/hello") { call.respondHtml {
+            body {
+                form {
+                    method = FormMethod.post
+                    div {
+                        label { +"User" }
+                        input {
+                            name = "user"
+                        }
+                        label { +"Password" }
+                        input {
+                            name = "password"
+                            type = InputType.password
+                        }
+                    }
+                    submitInput {
+
+                    }
+                }
+            }
+        } }
+        authenticate("topsecret") {
+            post("/hello") {
+                call.respondHtml {
+                    body { h3 { +"Hello Admin" } }
+                }
+            }
+        }
     }
 }
 
