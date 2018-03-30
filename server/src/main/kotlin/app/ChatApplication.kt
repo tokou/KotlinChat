@@ -62,12 +62,15 @@ fun Application.app() {
         log.debug("${call.sessions}")
         log.debug("${call.authentication.principal}")
     }
+    intercept(ApplicationCallPipeline.Infrastructure) {
+        call.sessions.get<UserIdPrincipal>()?.let { call.authentication.principal(it) }
+    }
 }
 
 fun Application.hello() {
     routing {
         get("/hello") {
-            if (call.sessions.get<UserIdPrincipal>() != null) {
+            if (call.authentication.principal != null) {
                 call.respondRedirect("/admin")
                 return@get
             }
@@ -93,23 +96,27 @@ fun Application.hello() {
                 }
             }
         } }
-        get("/admin") {
-            if (call.sessions.get<UserIdPrincipal>() == null) {
-                call.respondRedirect("/hello")
-                return@get
-            }
-            call.respondHtml {
-                body {
-                    h3 { +"Hello Admin" }
-                    h2 { +"${call.sessions.get<UserIdPrincipal>()}" }
+        authenticate("topsecret") {
+            get("/admin") {
+                call.respondHtml {
+                    body {
+                        h3 { +"Hello Admin" }
+                        h2 { +"${call.sessions.get<UserIdPrincipal>()}" }
+                        a {
+                            href = "/logout"
+                            button { +"Logout" }
+                        }
+                    }
                 }
             }
-        }
-        authenticate("topsecret") {
             post("/login") {
                 call.sessions.set(call.authentication.principal!! as UserIdPrincipal)
                 call.respondRedirect("/admin")
             }
+        }
+        get("/logout") {
+            call.sessions.clear<UserIdPrincipal>()
+            call.respondRedirect("/hello")
         }
     }
 }
